@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#09090f">
+<title>VORTEX SENSI — Gerador de Sensibilidade</title>
+<style>
+:root{--bg:#09090f;--panel:#15131a;--panel2:#21130f;--orange:#ff5a00;--orange2:#ff9b4a;--muted:#88838a;--line:#29252b;--white:#f7f5f5}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 8%,#54200e 0,transparent 34%),radial-gradient(ellipse at 90% 80%,#35170f 0,transparent 28%),var(--bg);color:var(--white);font:16px system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+.app{max-width:850px;margin:auto;padding:24px 18px 34px;min-height:100vh;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:16px;margin:12px 0 34px}.back{border:1px solid #554038;background:#2b1a16;color:#eee;border-radius:22px;padding:15px 20px;font-weight:700;font-size:16px;cursor:pointer}.brand small{display:block;color:var(--orange2);font-weight:800;letter-spacing:1px}.brand h1{font-size:clamp(25px,5vw,38px);margin:2px 0}.brand h1 span{color:var(--orange)}
+.step-title{display:flex;align-items:center;gap:12px;font-size:clamp(21px,4vw,29px);margin:0 0 12px}.num{width:44px;height:44px;border:1px solid #66300f;background:#24150f;color:var(--orange2);border-radius:50%;display:grid;place-items:center;font-size:20px}.sub{color:var(--muted);margin:0 0 18px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tile{min-height:76px;border:2px solid var(--line);border-radius:21px;background:linear-gradient(120deg,#17141a,#1d120f);color:var(--white);font-weight:750;font-size:16px;padding:15px;text-align:left;cursor:pointer;transition:.15s}.tile:hover,.tile.selected{border-color:#a83d00;background:#32180f;color:var(--orange2)}.tile .phone{color:#777;margin-right:10px}.tile.center{text-align:center;min-height:95px}.hidden{display:none!important}
+.custom{display:flex;gap:8px;margin-top:12px}.custom input{flex:1;min-width:0}
+input,select{background:#15131a;border:1px solid #393139;color:white;border-radius:14px;padding:14px;font:inherit;outline:none}input:focus,select:focus{border-color:var(--orange)}
+.selected-device{margin-top:16px;border:1px solid #78300a;border-radius:18px;padding:16px;color:var(--orange2);background:#21130f;font-weight:700;display:flex;justify-content:space-between}
+.level{display:flex;align-items:center;gap:14px;text-align:left;width:100%;margin:12px 0;padding:18px;border:2px solid var(--line);border-radius:22px;background:linear-gradient(110deg,#15131a,#21130f);color:white;cursor:pointer}.level.selected{border-color:#a83d00;background:linear-gradient(110deg,#32180f,#171016)}.level-icon{width:66px;height:66px;display:grid;place-items:center;border:1px solid #71300d;border-radius:20px;color:var(--orange2);font-size:28px;background:#351a0e}.level strong{display:block;font-size:20px;color:var(--orange2)}.level small{display:block;color:var(--muted);font-size:15px;margin-top:3px}.tag{margin-left:auto;border:1px solid #78300a;border-radius:20px;padding:6px 12px;color:var(--orange2);font-size:12px;font-weight:800;white-space:nowrap}
+.spacer{flex:1;min-height:50px}.footer{margin-top:28px}.usage{text-align:center;color:var(--muted);margin:0 0 16px}.generate{width:100%;border:0;border-radius:25px;background:linear-gradient(100deg,#ff5a00,#ff790e);color:#090909;font-weight:850;font-size:23px;padding:22px;cursor:pointer;box-shadow:0 10px 35px #ff5a002c}.generate:active{transform:scale(.99)}
+.nav{display:flex;justify-content:space-around;gap:5px;margin-top:14px;padding:10px;background:#171720;border:1px solid #30303a;border-radius:25px}.nav button{background:transparent;border:0;color:#88858d;padding:8px 10px;border-radius:18px;font-size:13px;cursor:pointer}.nav button.active{background:#3a2018;color:var(--orange2)}
+.result{border:1px solid #6b2b08;border-radius:22px;background:#171016;padding:18px;margin-top:18px}.result h3{margin:0 0 14px;color:var(--orange2)}.result-row{display:flex;justify-content:space-between;gap:12px;padding:13px 4px;border-bottom:1px solid #30272b}.result-row:last-child{border:0}.result-row b{font-size:20px;color:#ff9b4a;font-variant-numeric:tabular-nums}.actions{display:flex;gap:10px;margin-top:15px}.secondary{flex:1;background:#211812;border:1px solid #71300d;color:#ffad72;border-radius:14px;padding:13px;font-weight:700;cursor:pointer}
+@media(max-width:520px){.app{padding:18px 14px 25px}.grid{gap:9px}.tile{font-size:14px;padding:12px;min-height:68px}.level{padding:13px;gap:10px}.level-icon{width:54px;height:54px}.tag{font-size:10px;padding:5px 8px}.brand h1{font-size:26px}.back{padding:12px 14px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <button class="back hidden" id="backBtn" onclick="goBack()">← Voltar</button>
+  <div class="brand"><small>✧ ⚡ VORTEX SENSI ⚡</small><h1><span>Sensi</span> Personalizada</h1></div>
+</header>
+
+<section id="brandScreen">
+  <h2 class="step-title"><span class="num">1</span> ▯ Perfil do Dispositivo</h2>
+  <p class="sub">Escolha o sistema e depois a marca do seu aparelho.</p>
+  <div class="grid" id="osGrid">
+    <button class="tile center" onclick="chooseOS('iPhone')">▯<br>iPhone</button>
+    <button class="tile center" onclick="chooseOS('Android')">▯<br>Android</button>
+  </div>
+  <div id="brandArea" class="hidden">
+    <p class="sub" id="brandSubtitle">Escolha a marca</p>
+    <div class="grid" id="brandGrid"></div>
+  </div>
+  <div id="modelArea" class="hidden">
+    <p class="sub" id="modelSubtitle">Escolha o modelo</p>
+    <div class="grid" id="modelGrid"></div>
+    <div class="custom"><input id="customModel" placeholder="Não encontrou? Digite seu modelo"><button class="secondary" onclick="useCustomModel()">Usar</button></div>
+  </div>
+  <div id="deviceSelected" class="selected-device hidden"><span id="deviceLabel"></span><span>✓</span></div>
+</section>
+
+<section id="levelScreen" class="hidden">
+  <h2 class="step-title"><span class="num">2</span> ↗ Selecione a Sensi</h2>
+  <p class="sub">Escolha o nível para gerar valores dentro do limite indicado.</p>
+  <button class="level selected" data-level="alta" onclick="chooseLevel('alta',this)"><span class="level-icon">↗</span><span><strong>Sensi alta</strong><small>Mira bem rápida · 0 a 200</small></span><span class="tag">MUITO RÁPIDA</span></button>
+  <button class="level" data-level="media" onclick="chooseLevel('media',this)"><span class="level-icon">＝</span><span><strong>Sensi média</strong><small>Bom pra tudo · 0 a 180</small></span><span class="tag">BALANCEADA</span></button>
+  <button class="level" data-level="baixa" onclick="chooseLevel('baixa',this)"><span class="level-icon">↘</span><span><strong>Sensi baixa</strong><small>Mira mais estável · 0 a 150</small></span><span class="tag">MAIS CONTROLE</span></button>
+  <div id="result" class="result hidden" aria-live="polite">
+    <h3>✦ Sua sensibilidade gerada</h3>
+    <div id="resultDevice" class="sub"></div>
+    <div id="values"></div>
+    <div class="actions"><button class="secondary" onclick="copyResults()">▣ Copiar sensi</button><button class="secondary" onclick="generate()">↻ Gerar outra</button></div>
+  </div>
+</section>
+
+<div class="spacer"></div>
+<footer class="footer">
+  <p class="usage" id="usage">0 de 10 sensis usadas hoje · 10 restantes</p>
+  <button class="generate" onclick="generate()">✧ &nbsp;Gerar Sensi</button>
+  <nav class="nav"><button class="active">⌂<br>Início</button><button onclick="showNotice('Sensi segundos famoso')">♜<br>Sensi famoso</button><button onclick="showNotice('Sensi segundos')">♛<br>Sensi segundos</button><button onclick="showNotice('sensiespecial')">✧<br>sensiespecial</button></nav>
+</footer>
+</div>
+<script>
+const catalog = {
+ "Samsung":["Galaxy S25 Ultra","Galaxy S25+","Galaxy S25","Galaxy S24 Ultra","Galaxy S24+","Galaxy S24","Galaxy S23 Ultra","Galaxy S23+","Galaxy S23","Galaxy S22 Ultra","Galaxy S22","Galaxy A56","Galaxy A55","Galaxy A54","Galaxy A36","Galaxy A35","Galaxy A34","Galaxy A25","Galaxy A15","Galaxy A14","Galaxy M55","Galaxy M54","Galaxy M35","Galaxy M34"],
+ "Xiaomi":["Xiaomi 15 Ultra","Xiaomi 15","Xiaomi 14 Ultra","Xiaomi 14","Xiaomi 13T Pro","Xiaomi 13T","Redmi Note 14 Pro+","Redmi Note 14 Pro","Redmi Note 14","Redmi Note 13 Pro+","Redmi Note 13 Pro","Redmi Note 13","Redmi Note 12","Redmi 13C","Redmi 12","Redmi 10"],
+ "POCO":["POCO F7 Ultra","POCO F7 Pro","POCO F6 Pro","POCO F6","POCO F5 Pro","POCO F5","POCO X7 Pro","POCO X6 Pro","POCO X6","POCO M7 Pro","POCO M6 Pro","POCO C75"],
+ "Motorola":["Edge 60 Pro","Edge 60 Fusion","Edge 50 Ultra","Edge 50 Pro","Edge 50 Fusion","Edge 40 Neo","Moto G85","Moto G75","Moto G55","Moto G54","Moto G34","Moto G24","Moto G84","Moto G73"],
+ "Realme":["Realme 14 Pro+","Realme 14 Pro","Realme 13 Pro+","Realme 13 Pro","Realme 13+","Realme 13","Realme 12 Pro+","Realme 12 Pro","Realme 12+","Realme 12","Realme 11 Pro+","Realme 11 Pro","Realme C75","Realme C67","Realme C65","Realme C61","Realme C55","Realme C53"],
+ "ASUS":["ROG Phone 9 Pro","ROG Phone 9","ROG Phone 8 Pro","ROG Phone 8","Zenfone 11 Ultra","Zenfone 10"],
+ "Infinix":["GT 30 Pro","GT 20 Pro","Note 50 Pro","Note 40 Pro","Note 40","Hot 50 Pro+","Hot 50","Hot 40 Pro","Hot 40i","Smart 9"],
+ "Tecno":["Pova 6 Pro","Pova 6","Pova 5 Pro","Camon 30 Pro","Camon 30","Spark 30 Pro","Spark 20 Pro"],
+ "OPPO":["Reno 13 Pro","Reno 13","Reno 12 Pro","Reno 12","A5 Pro","A3 Pro","A79","A60"],
+ "vivo":["V50","V40 Pro","V40","V30 Pro","V30","Y200","Y100","Y28","Y18"],
+ "OnePlus":["OnePlus 13","OnePlus 13R","OnePlus 12","OnePlus 12R","Nord 4","Nord CE4"],
+ "Huawei":["Pura 70 Ultra","Pura 70 Pro","P60 Pro","Nova 12","Nova 11"],
+ "Honor":["Magic7 Pro","Magic6 Pro","Honor 200 Pro","Honor 200","X9c","X8b"],
+ "Apple":["iPhone 16 Pro Max","iPhone 16 Pro","iPhone 16 Plus","iPhone 16","iPhone 15 Pro Max","iPhone 15 Pro","iPhone 15 Plus","iPhone 15","iPhone 14 Pro Max","iPhone 14 Pro","iPhone 14","iPhone 13 Pro Max","iPhone 13","iPhone 12","iPhone 11"]
+};
+let os="",brand="",model="",level="alta",generatedText="",count=0;
+const $=id=>document.getElementById(id);
+function chooseOS(v){os=v;$("osGrid").classList.add("hidden");$("brandArea").classList.remove("hidden");$("brandSubtitle").textContent="Escolha a marca do seu "+v;
+ const brands=v==="iPhone"?["Apple"]:Object.keys(catalog).filter(x=>x!=="Apple");
+ $("brandGrid").innerHTML=brands.map(b=>`<button class="tile" onclick="chooseBrand('${b.replace(/'/g,"\\'")}')"><span class="phone">▯</span>${b}</button>`).join("");
+ $("backBtn").classList.remove("hidden");
+}
+function chooseBrand(v){brand=v;model="";$("modelArea").classList.remove("hidden");$("modelSubtitle").textContent="Modelos "+v;
+ const models=catalog[v]||[];
+ $("modelGrid").innerHTML=models.map(m=>`<button class="tile" onclick="chooseModel('${m.replace(/'/g,"\\'")}')"><span class="phone">▯</span>${m}</button>`).join("");
+ $("deviceSelected").classList.add("hidden");$("customModel").value="";
+}
+function chooseModel(v){model=v;$("deviceLabel").textContent=brand+" "+model;$("deviceSelected").classList.remove("hidden");$("levelScreen").classList.remove("hidden");$("result").classList.add("hidden");}
+function useCustomModel(){const v=$("customModel").value.trim();if(!v){alert("Digite o modelo do seu aparelho.");return}chooseModel(v)}
+function chooseLevel(v,el){level=v;document.querySelectorAll(".level").forEach(x=>x.classList.toggle("selected",x===el));$("result").classList.add("hidden")}
+function goBack(){if(!$("modelArea").classList.contains("hidden")){$("modelArea").classList.add("hidden");$("deviceSelected").classList.add("hidden");$("levelScreen").classList.add("hidden");brand="";return}
+ if(!$("brandArea").classList.contains("hidden")){$("brandArea").classList.add("hidden");$("osGrid").classList.remove("hidden");$("backBtn").classList.add("hidden");os="";}}
+function generate(){if(!os||!brand||!model){alert("Escolha primeiro o sistema, a marca e o modelo do aparelho.");return}
+ const max={alta:200,media:180,baixa:150}[level];
+ // Faixas variadas para gerar uma configuração inicial dentro do limite escolhido.
+ const specs=[["Geral",.78,1],["Red Dot",.72,.96],["Mira 2x",.62,.88],["Mira 4x",.52,.78],["Mira AWM",.18,.48],["Olhadinha",.55,.85]];
+ const vals=specs.map(([name,min,maxFactor])=>[name,Math.max(0,Math.min(max,Math.round(max*(min+Math.random()*(maxFactor-min)))))]);
+ generatedText=`VORTEX SENSI\nAparelho: ${brand} ${model}\nNível: ${level.toUpperCase()} (0 a ${max})\n`+vals.map(([n,v])=>`${n}: ${v}`).join("\n");
+ $("resultDevice").textContent=`${brand} ${model} · ${level} · limite ${max}`;
+ $("values").innerHTML=vals.map(([n,v])=>`<div class="result-row"><span>${n}</span><b>${v}</b></div>`).join("");
+ $("result").classList.remove("hidden");count++;$("usage").textContent=`${count} sensi(s) gerada(s) nesta sessão`;
+}
+async function copyResults(){
+ if(!generatedText){showNotice("Gere uma sensi antes de copiar.");return}
+ try{
+   if(navigator.clipboard && window.isSecureContext){
+     await navigator.clipboard.writeText(generatedText);
+   }else{
+     const t=document.createElement("textarea");
+     t.value=generatedText;
+     t.setAttribute("readonly","");
+     t.style.position="fixed";
+     t.style.opacity="0";
+     document.body.appendChild(t);
+     t.select();
+     t.setSelectionRange(0,t.value.length);
+     const copied=document.execCommand("copy");
+     t.remove();
+     if(!copied) throw new Error("Falha ao copiar");
+   }
+   showNotice("Sensi copiada!");
+ }catch(e){
+   showNotice("Não foi possível copiar automaticamente. Selecione e copie o texto da sensi.");
+ }
+}
+function showNotice(message){alert(message)}
+</script>
+</body>
+</html>
